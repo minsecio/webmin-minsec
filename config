@@ -1,0 +1,8 @@
+minsec_cmd=/usr/bin/minsec
+config_dir=/etc/minsec
+service_name=minsec
+nft_cmd=/usr/sbin/nft
+perpage=50
+connect_timeout=3
+read_timeout=5
+

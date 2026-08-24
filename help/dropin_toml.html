@@ -1,0 +1,11 @@
+<header>Configuration TOML</header>
+<p>Enter Minsec configuration using the same tables accepted by <tt>minsec.toml</tt>. Drop-ins are merged over the main configuration.</p>
+<p>Use <tt>[defaults]</tt> for global policy and backend settings, or <tt>[filters.NAME]</tt> to enable a filter and override its policy or log sources.</p>
+<pre>[defaults]
+maxretry = 5
+bantime = "1h"
+
+[filters.sshd]
+enabled = true
+maxretry = 3</pre>
+<footer>minsec(8)</footer>

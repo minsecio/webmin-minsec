@@ -1,0 +1,8 @@
+minsec_cmd=Full path to minsec command,0
+config_dir=Minsec configuration directory,0
+service_name=Service name,0
+nft_cmd=Full path to nft command,0
+perpage=Items to display per page,3,Default (50)
+connect_timeout=Control socket connection timeout in seconds,3,Default (3)
+read_timeout=Control socket read timeout in seconds,3,Default (5)
+

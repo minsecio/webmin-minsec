@@ -1,0 +1,8 @@
+<header>Custom filter TOML</header>
+<p>Define how Minsec finds and recognizes failed activity. A filter needs a <tt>name</tt> and one or more <tt>patterns</tt>, plus file paths or journal selectors that identify its log source.</p>
+<pre>name = "myapp"
+files = ["/var/log/myapp.log"]
+prefilter = ["login failed"]
+patterns = ['login failed for &lt;F-USER&gt;\S+&lt;/F-USER&gt; from &lt;HOST&gt;']</pre>
+<p>The filter must also be enabled in Minsec configuration with <tt>[filters.myapp]</tt> and <tt>enabled = true</tt>.</p>
+<footer>minsec(8)</footer>

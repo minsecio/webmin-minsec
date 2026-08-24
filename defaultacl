@@ -1,0 +1,10 @@
+view=1
+events=1
+nftables=1
+bans=1
+filters=1
+config=1
+raw=0
+service=1
+boot=1
+
