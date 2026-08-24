@@ -18,7 +18,7 @@ ui_print_header('', $text{'bans_title'}, '', 'intro', 1, 1);
 print minsec::navigation('bans');
 print ui_alert_box(minsec::html_escape($inspect_error || $response_error), 'warning') if ($inspect_error || $response_error);
 print ui_form_start('ban_action.cgi', 'post');
-my @columns = ('', $text{'bans_address'}, $text{'bans_filter'}, $text{'bans_expires'}, $text{'bans_duration'});
+my @columns = (hlink($text{'bans_select'}, 'bans_select'), $text{'bans_address'}, $text{'bans_filter'}, $text{'bans_expires'}, $text{'bans_duration'});
 my @rows;
 foreach my $ban (@$page_bans) {
 	my $address = minsec::html_escape($ban->{'net'} || '');
@@ -34,9 +34,9 @@ print ui_columns_table(\@columns, undef, \@rows, undef, 0, undef, undef, 'bans')
 if (minsec::check_acl('bans')) {
 	print minsec::action_button($text{'bans_unban'}, 'operation', 'unban');
 	print ui_table_start($text{'bans_manual'}, 'width=100%', 2);
-	print ui_table_row($text{'bans_address'}, ui_textbox('network', '', 45));
-	print ui_table_row($text{'bans_duration'}, ui_textbox('duration', '', 12));
-	print ui_table_row($text{'bans_filter'}, ui_textbox('filter', 'manual', 24));
+	print ui_table_row(hlink($text{'bans_address'}, 'bans_address'), ui_textbox('network', '', 45));
+	print ui_table_row(hlink($text{'bans_duration'}, 'bans_duration'), ui_textbox('duration', '', 12));
+	print ui_table_row(hlink($text{'bans_filter'}, 'bans_filter'), ui_textbox('filter', 'manual', 24));
 	print ui_table_end();
 	print minsec::action_button($text{'bans_ban'}, 'operation', 'ban');
 }

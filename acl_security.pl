@@ -10,7 +10,7 @@ sub acl_security_form
 	my ($options) = @_;
 	foreach my $permission (minsec::acl_permissions()) {
 		my $label = $text{'acl_'.$permission} || $permission;
-		print ui_table_row($label,
+		print ui_table_row(hlink($label, 'acl_permissions'),
 			ui_yesno_radio($permission, $options->{$permission}));
 	}
 }
@@ -22,4 +22,3 @@ sub acl_security_save
 		$options->{$permission} = $in{$permission} ? 1 : 0;
 	}
 }
-
