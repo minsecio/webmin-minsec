@@ -77,8 +77,11 @@ sub navigation
 		[ 'events', $text{'index_events'}, 'events.cgi' ],
 		[ 'nftables', $text{'index_nftables'}, 'nftables.cgi' ],
 	);
-	return main::ui_tabs_start(\@tabs, 'section', $selected, 0).
-		main::ui_tabs_end(0);
+	my @links = map {
+		$_->[0] eq $selected ? '<b>'.html_escape($_->[1]).'</b>'
+					  : link_html($_->[2], $_->[1])
+		} @tabs;
+	return main::ui_links_row(\@links);
 }
 
 sub check_acl
