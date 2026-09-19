@@ -1,0 +1,5 @@
+severity = 5
+
+# Octal modes are the standard Perl idiom used by Webmin modules.
+[-ValuesAndExpressions::ProhibitLeadingZeros]
+[-Modules::RequireFilenameMatchesPackage]
