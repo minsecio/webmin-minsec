@@ -107,4 +107,20 @@ my (undef, $delete_error) = minsec::staged_change(
 is($delete_error, undef, 'validated delete succeeds');
 ok(!-e $target, 'validated delete applied');
 
+
+{
+	my $dir = tempdir(CLEANUP => 1);
+	my $cmd = "$dir/minsec";
+	{ package minsec; do './install_check.pl' or die $@; } ## no critic
+	local %minsec::config = ('minsec_cmd' => $cmd, 'config_dir' => "$dir/etc");
+	is(minsec::is_installed(1), 0, 'missing binary not installed');
+	open(my $fh, '>', $cmd) or die $!;
+	close($fh);
+	chmod(0755, $cmd);
+	is(minsec::is_installed(0), 1, 'binary present, mode 0');
+	is(minsec::is_installed(1), 1, 'binary without config dir');
+	make_path("$dir/etc");
+	is(minsec::is_installed(1), 2, 'binary and config dir');
+}
+
 done_testing();
