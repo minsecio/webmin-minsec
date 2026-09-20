@@ -18,7 +18,7 @@ ui_print_header('', $text{'bans_title'}, '', 'intro', 1, 1);
 print minsec::navigation('bans');
 print ui_alert_box(minsec::html_escape($inspect_error || $response_error), 'warning') if ($inspect_error || $response_error);
 print ui_form_start('ban_action.cgi', 'post');
-my @columns = (hlink($text{'bans_select'}, 'bans_select'), $text{'bans_address'}, $text{'bans_filter'}, $text{'bans_expires'}, $text{'bans_duration'});
+my @columns = (hlink($text{'bans_select'}, 'bans_select'), $text{'bans_address'}, $text{'bans_filter'}, $text{'bans_expires'});
 my @rows;
 foreach my $ban (@$page_bans) {
 	my $address = minsec::html_escape($ban->{'net'} || '');
@@ -26,7 +26,6 @@ foreach my $ban (@$page_bans) {
 		ui_checkbox('selected', $address, '', 0),
 		$address,
 		minsec::html_escape($ban->{'filter'} || ($ban->{'manual'} ? 'manual' : '-')),
-		minsec::html_escape(minsec::format_duration($ban->{'expires_in'})),
 		minsec::html_escape(minsec::format_duration($ban->{'expires_in'})),
 	]);
 }

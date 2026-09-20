@@ -2,6 +2,30 @@
 
 A Linux-only Webmin module for the minsec intrusion-prevention daemon. It provides service status, live ban management, filter policy controls and testing, structured and raw TOML editing, JSONL event history, configuration backups, ACLs, and a read-only view of `table inet minsec`.
 
+## Screenshots
+
+Screenshots use invented data on a private test machine.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://minsecio.github.io/webmin-minsec/dark/01-dashboard.png">
+  <img alt="Dashboard: service state, counters and per-filter match and ban totals" src="https://minsecio.github.io/webmin-minsec/light/01-dashboard.png">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://minsecio.github.io/webmin-minsec/dark/02-bans.png">
+  <img alt="Active bans with unban and manual ban controls" src="https://minsecio.github.io/webmin-minsec/light/02-bans.png">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://minsecio.github.io/webmin-minsec/dark/04-filter-policy.png">
+  <img alt="Filter policy editor with a filter test form" src="https://minsecio.github.io/webmin-minsec/light/04-filter-policy.png">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://minsecio.github.io/webmin-minsec/dark/09-events.png">
+  <img alt="Event history" src="https://minsecio.github.io/webmin-minsec/light/09-events.png">
+</picture>
+
 ## Required minsec machine interface
 
 The module deliberately does not parse minsec configuration itself. It requires these local, offline commands:
@@ -33,3 +57,16 @@ MINSEC_TESTING=1 prove -v t/lib.t t/commands.t t/socket.t t/perlcritic.t
 The socket test creates a temporary Unix socket. In a restricted sandbox it may require permission to create local sockets.
 
 The companion minsec implementation lives in the separate `minsec` repository. Its Rust tests cover the versioned inspection schema, merged configuration reporting, disabled custom-filter discovery, and structured `check --all` success and error results.
+
+## Regenerating screenshots
+
+The screenshots are generated, not captured by hand. `screenshots/tools/make-shots.sh`
+starts a throwaway Webmin on 127.0.0.1:9999 from a private copy of `/etc/webmin`, points
+the module at a fake minsec (the real binary reading a generated config tree and event log,
+plus a small socket server answering `status` and `list`), and photographs every page in
+both Authentic palettes with Playwright. `screenshots/tools/publish.sh` quantizes the result
+and force-pushes it as the single commit of the `gh-pages` branch, so the images never enter
+the main history.
+
+It needs passwordless sudo, a real `minsec` binary, `npm i --no-save playwright-core`, and a
+Playwright Chromium under `~/.cache/ms-playwright`.

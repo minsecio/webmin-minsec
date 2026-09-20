@@ -26,4 +26,4 @@ error(minsec::html_escape($test_error)) if ($test_error);
 ui_print_header('', 'Filter Test: '.minsec::html_escape($name), '', 'intro', 1, 1);
 print minsec::navigation('filters');
 print '<pre>'.minsec::html_escape(JSON::PP->new->canonical->pretty->encode($result)).'</pre>';
-ui_print_footer('filter_edit.cgi?name='.urlize($name), 'Return to filter');
+ui_print_footer('filter_edit.cgi?name='.urlize($name), 'filter policy');

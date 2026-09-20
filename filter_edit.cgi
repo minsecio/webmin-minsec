@@ -28,7 +28,7 @@ if (minsec::service_state()->{'running'} && minsec::check_acl('service')) {
 	print minsec::action_button($text{'config_restart'}, 'operation', 'restart');
 }
 print ui_form_end();
-print ui_form_start('test_filter.cgi', 'post', 'enctype="multipart/form-data"');
+print ui_form_start('test_filter.cgi', 'form-data');
 print ui_hidden('name', $name);
 print ui_table_start('Test Filter', 'width=100%', 2);
 print ui_table_row(hlink($text{'filters_test_file'}, 'filter_test_file'), ui_textbox('log_file', '', 70));

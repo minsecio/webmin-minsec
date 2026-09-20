@@ -15,7 +15,13 @@ my @columns = ($text{'filters_name'}, $text{'filters_type'}, $text{'filters_sour
 my @rows;
 foreach my $filter (@$filters) {
 	my $policy = $filter->{'effective_policy'} || {};
-	my @policy = map { minsec::html_escape($_.'='.$policy->{$_}) } sort(keys(%$policy));
+	my @policy;
+	foreach my $key (sort(keys(%$policy))) {
+		my $value = $policy->{$key};
+		next if (ref($value) eq 'HASH');
+		$value = join(', ', @$value) if (ref($value) eq 'ARRAY');
+		push(@policy, minsec::html_escape($key.'='.($value // '')));
+	}
 	push(@rows, [
 		minsec::html_escape($filter->{'name'}),
 		minsec::html_escape($filter->{'builtin'} ? 'built-in' : 'custom'),
