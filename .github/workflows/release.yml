@@ -80,7 +80,7 @@ jobs:
         run: |
           set -e
           if command -v dnf >/dev/null; then
-            dnf install -y curl
+            command -v curl >/dev/null || dnf install -y curl
             curl -fsSLo setup-repos.sh https://raw.githubusercontent.com/webmin/webmin/master/setup-repos.sh
             sh setup-repos.sh -f
             dnf install -y webmin
@@ -99,7 +99,7 @@ jobs:
           grep -qw minsec /etc/webmin/webmin.acl
           test ! -e $root/minsec/screenshots
           test ! -e $root/minsec/t
-          cd $root/minsec && for f in *.cgi *.pl; do perl -c "$f"; done
+          cd $root/minsec && for f in *.cgi *.pl; do WEBMIN_CONFIG=/etc/webmin WEBMIN_VAR=/var/webmin perl -c "$f"; done
 
   release:
     needs: [build, smoke]
