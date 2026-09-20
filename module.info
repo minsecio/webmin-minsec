@@ -3,5 +3,5 @@ desc=Minsec Intrusion Prevention
 os_support=*-linux
 category=net
 longdesc=Monitor and administer the minsec intrusion prevention daemon, bans, filters, configuration, events, and nftables state.
-version=0.1.2
+version=0.1.3
 rpm_requires=perl(Cwd) perl(Errno) perl(Fcntl) perl(File::Basename) perl(File::Copy) perl(File::Find) perl(File::Path) perl(File::Spec) perl(File::Temp) perl(IO::Handle) perl(IO::Select) perl(IO::Socket::UNIX) perl(IPC::Open3) perl(JSON::PP) perl(POSIX) perl(Socket) perl(Symbol) perl(Time::HiRes)

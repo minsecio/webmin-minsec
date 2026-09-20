@@ -99,7 +99,7 @@ jobs:
           grep -qw minsec /etc/webmin/webmin.acl
           test ! -e $root/minsec/screenshots
           test ! -e $root/minsec/t
-          cd $root/minsec && for f in *.cgi *.pl; do WEBMIN_CONFIG=/etc/webmin WEBMIN_VAR=/var/webmin perl -c "$f"; done
+          cd $root/minsec && for f in *.cgi *.pl; do WEBMIN_CONFIG=/etc/webmin WEBMIN_VAR=/var/webmin perl -c "$root/minsec/$f"; done
 
   release:
     needs: [build, smoke]
