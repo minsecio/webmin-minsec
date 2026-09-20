@@ -46,7 +46,11 @@ Every save or delete copies the complete configuration tree to a private tempora
 
 ## Installation
 
-Copy this directory into Webmin's module directory as `minsec`, or package it with Webmin's standard module packaging tools. Defaults target `/usr/bin/minsec`, `/etc/minsec`, the `minsec` service, and `/usr/sbin/nft`; all are configurable in Module Config.
+Download the `webmin-minsec` deb or RPM from the [releases page](https://github.com/minsecio/webmin-minsec/releases) and install it with `apt` or `dnf`. Webmin must already be installed. Alternatively, copy this directory into Webmin's module directory as `minsec`. Defaults target `/usr/bin/minsec`, `/etc/minsec`, the `minsec` service, and `/usr/sbin/nft`; all are configurable in Module Config.
+
+## Releasing
+
+Set `version=` in `module.info`, commit, and push a matching tag such as `v0.1.0`. The release workflow checks out Webmin's `makemodulerpm.pl` and `makemoduledeb.pl`, builds both packages, installs them on top of Webmin in AlmaLinux, Debian, and Ubuntu containers, and attaches them to a GitHub release. Files listed in `EXCLUDE` are left out of the packages.
 
 ## Tests
 

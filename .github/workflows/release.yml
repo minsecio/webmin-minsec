@@ -1,0 +1,120 @@
+name: release
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+env:
+  URL: https://github.com/minsecio/webmin-minsec
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          path: minsec
+      # Webmin's packaging scripts are self-contained; only these two files
+      # are needed. Pinned to a webmin/webmin master commit; bump deliberately.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: webmin/webmin
+          ref: ef22c05115602a8a02d0862953602866e4e5e555
+          path: webmin
+          sparse-checkout: |
+            makemodulerpm.pl
+            makemoduledeb.pl
+          sparse-checkout-cone-mode: false
+      - name: Version
+        id: version
+        run: |
+          version=$(sed -n 's/^version=//p' minsec/module.info)
+          if [ "$GITHUB_REF_TYPE" = tag ] && [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::tag $GITHUB_REF_NAME does not match module.info version $version"
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - run: sudo apt-get install -y libperl-critic-perl rpm fakeroot
+      - name: Test
+        run: cd minsec && MINSEC_TESTING=1 prove t
+      - name: Package
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          mkdir -p dist ~/rpmbuild/{SPECS,SOURCES,BUILD,BUILDROOT,RPMS/noarch,SRPMS}
+          perl webmin/makemodulerpm.pl minsec "$VERSION" --prefix webmin- \
+            --licence BSD-3-Clause --vendor minsec --url "$URL" --target-dir dist
+          perl webmin/makemoduledeb.pl minsec "$VERSION" \
+            --licence BSD-3-Clause --email 'Joe Cooper <swelljoe@gmail.com>' --url "$URL" --target-dir dist
+          # makemodulerpm.pl exits 0 when rpmbuild fails
+          test -f "dist/webmin-minsec-$VERSION-1.noarch.rpm"
+          test -f "dist/webmin-minsec_${VERSION}_all.deb"
+          ls -la dist
+      - name: Inspect packages
+        run: |
+          for f in dist/*.deb; do dpkg-deb --info "$f"; dpkg-deb --contents "$f"; done
+          for f in dist/*.rpm; do rpm -qip "$f"; rpm -qlp "$f"; rpm -qp --requires "$f"; done
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: packages
+          path: dist/*
+
+  smoke:
+    name: install smoke (${{ matrix.image }})
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ["almalinux:9", "almalinux:10", "debian:12", "ubuntu:24.04"]
+    container:
+      image: ${{ matrix.image }}
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: packages
+          path: dist
+      - name: Install Webmin and the module
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          set -e
+          if command -v dnf >/dev/null; then
+            dnf install -y curl
+            curl -fsSLo setup-repos.sh https://raw.githubusercontent.com/webmin/webmin/master/setup-repos.sh
+            sh setup-repos.sh -f
+            dnf install -y webmin
+            dnf install -y dist/*.noarch.rpm
+            root=/usr/libexec/webmin
+          else
+            apt-get update -qq && apt-get install -y -qq curl gnupg
+            curl -fsSLo setup-repos.sh https://raw.githubusercontent.com/webmin/webmin/master/setup-repos.sh
+            sh setup-repos.sh -f
+            apt-get install -y -qq webmin
+            apt-get install -y -qq ./dist/*_all.deb
+            root=/usr/share/webmin
+          fi
+          test -r $root/minsec/module.info
+          test -r /etc/webmin/minsec/config
+          grep -qw minsec /etc/webmin/webmin.acl
+          test ! -e $root/minsec/screenshots
+          test ! -e $root/minsec/t
+          cd $root/minsec && for f in *.cgi *.pl; do perl -c "$f"; done
+
+  release:
+    needs: [build, smoke]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: packages
+          path: dist
+      - name: Checksums
+        run: cd dist && sha256sum * > SHA256SUMS && ls -la
+      - uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2
+        with:
+          files: dist/*
+          generate_release_notes: true

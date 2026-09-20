@@ -3,4 +3,4 @@ desc=Minsec Intrusion Prevention
 os_support=*-linux
 category=net
 longdesc=Monitor and administer the minsec intrusion prevention daemon, bans, filters, configuration, events, and nftables state.
-
+version=0.1.0
